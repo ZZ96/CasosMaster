@@ -1,0 +1,132 @@
+---
+title: "Caso Pŕactico Final"
+output:
+  html_document: default
+  html_notebook: default
+  pdf_document: default
+---
+
+Tomaremos el dataset de aprobación de crédito bancario en https://archive.ics.uci.edu/ml/datasets/Credit+Approval . Los datos también se pueden cargar de la carpeta de contenido en  `crx.data`. La información del dataset está en https://archive.ics.uci.edu/ml/machine-learning-databases/credit-screening/crx.names y expone lo siguiente:
+
+      1. Title: Credit Approval
+
+      2. Sources: 
+          (confidential)
+          Submitted by quinlan@cs.su.oz.au
+      
+      3.  Past Usage:
+      
+          See Quinlan,
+          * "Simplifying decision trees", Int J Man-Machine Studies 27,
+            Dec 1987, pp. 221-234.
+          * "C4.5: Programs for Machine Learning", Morgan Kaufmann, Oct 1992
+        
+      4.  Relevant Information:
+      
+          This file concerns credit card applications.  All attribute names
+          and values have been changed to meaningless symbols to protect
+          confidentiality of the data.
+        
+          This dataset is interesting because there is a good mix of
+          attributes -- continuous, nominal with small numbers of
+          values, and nominal with larger numbers of values.  There
+          are also a few missing values.
+        
+      5.  Number of Instances: 690
+      
+      6.  Number of Attributes: 15 + class attribute
+      
+      7.  Attribute Information:
+      
+          A1:	b, a.
+          A2:	continuous.
+          A3:	continuous.
+          A4:	u, y, l, t.
+          A5:	g, p, gg.
+          A6:	c, d, cc, i, j, k, m, r, q, w, x, e, aa, ff.
+          A7:	v, h, bb, j, n, z, dd, ff, o.
+          A8:	continuous.
+          A9:	t, f.
+          A10:	t, f.
+          A11:	continuous.
+          A12:	t, f.
+          A13:	g, p, s.
+          A14:	continuous.
+          A15:	continuous.
+          A16: +,-         (class attribute)
+      
+      8.  Missing Attribute Values:
+          37 cases (5%) have one or more missing values.  The missing
+          values from particular attributes are:
+      
+          A1:  12
+          A2:  12
+          A4:   6
+          A5:   6
+          A6:   9
+          A7:   9
+          A14: 13
+      
+      9.  Class Distribution
+        
+          +: 307 (44.5%)
+          -: 383 (55.5%)
+      
+## Actividades a realizar
+
+Importamos las librerias:
+```{r}
+library(tidyr)
+library(dplyr)
+# library(ggplot2)
+# library(caret)
+# library(corrplot)
+# library(fastDummies)
+```
+
+
+1. Carga los datos. Realiza una inspección por variables de la distribución de aprobación de crédito en función de cada atributo visualmente. Realiza las observaciones pertinentes. ¿ Qué variables son mejores para separar los datos?
+
+Hemos abierto el dataset con un editor de texto para ver que contenía, con ello hemos visto que no contiene los nombres de las columnas y que los campos estan separados por comas, por lo tanto, leemos el dataset indicando que no tiene cabecera con los índices y el separador ','
+```{r}
+df <- read.csv("CASO_FINAL_crx.data", header = FALSE, sep = ",", stringsAsFactors = T)
+head(df, 5)
+```
+Mostramos las 5 primeras lineas y no observamos nada extraño
+```{r}
+summary(df)
+```
+Observamos que hay algunos valores ?, lo más probable es que estos valores sean valores nulos, tomando por ejemplo V1 y V2 podemos ver que en V1 hay claramente dos clases divididas, a y b,y aparecen 12 valores ?, en la columna V2 se observa que son valores decimales y hay 12 ?.
+```{r}
+str(df)
+```
+Observamos que las ? se asumen como una nueva categoría, lo cual no es correcto, para ello quitaremos esos valores ?, quitaremos las filas que los contienen y volveremos a ejecutar el summary y el str.
+Para ello, los valores ? los convertimos en NA, vemos cuantos hay y usando drop_na() quitamos las filas que contengan valores NA, volvemos a ver cuantos valores NA hay para comprobar que ha funcionado correctamente.
+```{r}
+df[df == '?'] <- NA
+sapply(df, function(x) sum(is.na(x)))
+df <- df%>% drop_na ()
+sapply(df, function(x) sum(is.na(x)))
+summary(df)
+```
+
+Eliminamos las categorias que no tienen registros.
+```{r}
+df <- droplevels(df)
+summary(df)
+```
+```{r}
+df
+```
+
+
+2. Prepara el dataset convenientemente e imputa los valores faltantes usando la librería `missForest`
+3. Divide el dataset tomando las primeras 590 instancias como train y las últimas 100 como test.
+4. Entrena un modelo de regresión logística con regularización Ridge y Lasso en train seleccionando el que mejor **AUC** tenga. Da las métricas en test.
+5. Aporta los *log odds* de las variables predictoras sobre la variable objetivo.
+6. Si por cada verdadero positivo ganamos 100e y por cada falso positivo perdemos 20e. ¿Qué valor monetario generará el modelo teniendo en cuénta la matriz de confusión del modelo con mayor AUC (con las métricas en test)?
+
+```{r}
+
+```
+
